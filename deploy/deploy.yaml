@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: monkaos
+  namespace: monkaos-system
+  labels:
+    app: monkaos
+spec:
+  selector:
+    matchLabels:
+      app: monkaos
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: monkaos
+    spec:
+      serviceAccountName: monkaos
+      containers:
+        - name: monkaos
+          image: quay.io/maxgio92/monkaos:0.1.0

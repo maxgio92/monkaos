@@ -1,0 +1,14 @@
+# Scheduler
+scheduler:
+  tickPeriodSeconds: 20
+  enableRandomLatency: true
+  maxLatencySeconds: 1
+  deadlineSeconds: 2
+
+# Chaos
+chaos:
+  terminationGracePeriodSeconds: 10
+  victimsPerSchedule: 2
+  strategy: RandomPodRandomNamespace
+  excludeNamespaces:
+  - kube-system
