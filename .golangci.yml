@@ -28,6 +28,16 @@ linters:
     - lll
     - wrapcheck
     - varnamelen
+    - whitespace
+    - wsl
+    - gofumpt
+    - godot
+    - deadcode
+    - gci
+    - goerr113
+    - gomnd
+    - cyclop
+    - testpackage
 
 run:
   skip-dirs:

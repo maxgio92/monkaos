@@ -12,3 +12,4 @@ chaos:
   strategy: RandomPodRandomNamespace
   excludeNamespaces:
   - kube-system
+  - monkaos-system

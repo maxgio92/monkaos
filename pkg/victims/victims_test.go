@@ -1,7 +1,6 @@
 package victims
 
 import (
-	"context"
 	"fmt"
 	"testing"
 
@@ -9,7 +8,6 @@ import (
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
-	client "k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/kubernetes/fake"
 )
 
@@ -43,11 +41,13 @@ func newNamespace(name string) corev1.Namespace {
 }
 
 func newNamespaces(names []string) []corev1.Namespace {
+	//nolint:prealloc
 	var namespaces []corev1.Namespace
 	for _, v := range names {
 		namespace := newNamespace(v)
 		namespaces = append(namespaces, namespace)
 	}
+
 	return namespaces
 }
 
@@ -63,11 +63,6 @@ func createNPods(namePrefix string, namespace string, n int, status corev1.PodPh
 
 func createNRunningPods(namePrefix string, namespace string, n int) []runtime.Object {
 	return createNPods(namePrefix, namespace, n, corev1.PodRunning)
-}
-
-func getPodList(client client.Interface, namespace string) *corev1.PodList {
-	podList, _ := client.CoreV1().Pods(namespace).List(context.TODO(), metav1.ListOptions{})
-	return podList
 }
 
 func TestGetRandomPods(t *testing.T) {
