@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"errors"
 	"fmt"
 	"io"
 	"monkaos/pkg/config"
@@ -48,10 +49,12 @@ func GetViper(configFile string, configName string) (*viper.Viper, error) {
 	viper.AutomaticEnv()
 
 	if err := viper.ReadInConfig(); err != nil {
-		if _, ok := err.(viper.ConfigFileNotFoundError); !ok {
+		var configFileNotFoundError viper.ConfigFileNotFoundError
+		if !errors.As(err, &configFileNotFoundError) {
 			return viper.New(), fmt.Errorf("fatal error config file: %w", err)
 		}
 	}
+
 	return viper.GetViper(), nil
 }
 

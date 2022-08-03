@@ -27,13 +27,15 @@ func NewClientset() (*k.Clientset, error) {
 	clientset, err := k.NewForConfig(config)
 	if err != nil {
 		log.Errorf("failed to create clientset in NewForConfig: %v", err)
+
 		return nil, err
 	}
 
 	if verifyClient(clientset) {
 		return clientset, nil
 	}
-	return nil, fmt.Errorf("Unable to verify client connectivity to Kubernetes apiserver")
+
+	return nil, fmt.Errorf("unable to verify client connectivity to Kubernetes apiserver")
 }
 
 // NewInClusterClient only creates an initialized instance of k8 clientset
@@ -41,18 +43,22 @@ func NewInClusterClient() (*k.Clientset, error) {
 	config, err := rest.InClusterConfig()
 	if err != nil {
 		log.Errorf("failed to obtain config from InClusterConfig: %v", err)
+
 		return nil, err
 	}
 
 	clientset, err := k.NewForConfig(config)
 	if err != nil {
 		log.Errorf("failed to create clientset in NewForConfig: %v", err)
+
 		return nil, err
 	}
+
 	return clientset, nil
 }
 
 func verifyClient(client discovery.DiscoveryInterface) bool {
 	_, err := client.ServerVersion()
+
 	return err == nil
 }

@@ -11,10 +11,12 @@ type Schedule struct {
 	Entries []ScheduleEntry
 }
 
+//nolint:revive
 type ScheduleEntry interface {
 	Run(context.Context, chan<- *chaos.Result, *sync.WaitGroup, int64)
 }
 
+//nolint:revive
 type ScheduleResult interface{}
 
 func (s *Schedule) Add(entry ScheduleEntry) {

@@ -19,7 +19,6 @@ type Chaos struct {
 
 // New creates a new Chaos instance.
 func New(killtime time.Time, pod v1.Pod) *Chaos {
-	// TargetPodName will be populated at time of termination
 	return &Chaos{
 		KillAt: killtime,
 		Victim: pod,
@@ -49,6 +48,7 @@ func (c *Chaos) execute(ctx context.Context, resultCh chan<- *Result, waitGroup 
 		clientset, err := kubernetes.NewClientset()
 		if err != nil {
 			resultCh <- NewResult(c, err)
+
 			return
 		}
 
@@ -56,6 +56,7 @@ func (c *Chaos) execute(ctx context.Context, resultCh chan<- *Result, waitGroup 
 		err = c.terminate(ctx, clientset, gracePeriodSeconds)
 		if err != nil {
 			resultCh <- NewResult(c, err)
+
 			return
 		}
 

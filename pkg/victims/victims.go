@@ -2,8 +2,9 @@ package victims
 
 import (
 	"context"
+	"crypto/rand"
 	"fmt"
-	"math/rand"
+	"math/big"
 	"time"
 
 	"monkaos/pkg/kubernetes"
@@ -24,7 +25,7 @@ const (
 
 // GetPodVictims gathers list of `count` pods, from all
 // namespaces expect the ones specified in the exclude list.
-func GetPodVictims(count int, excludedNamespaces []string, strategy Strategy) (eligibleVictims []v1.Pod, err error) {
+func GetPodVictims(count int, excludedNamespaces []string, strategy Strategy) ([]v1.Pod, error) {
 	clientset, err := kubernetes.NewClientset()
 	if err != nil {
 		return nil, err
@@ -48,6 +49,7 @@ func GetPodVictims(count int, excludedNamespaces []string, strategy Strategy) (e
 	return victims, nil
 }
 
+//nolint:funlen
 func GetRandomPods(clientset k.Interface, count int, excludedNamespaces []string) ([]v1.Pod, error) {
 	var randomPods []v1.Pod
 
@@ -61,12 +63,15 @@ func GetRandomPods(clientset k.Interface, count int, excludedNamespaces []string
 		return nil, err
 	}
 
-	r := rand.New(rand.NewSource(time.Now().UnixNano()))
 	i := 0
 	retryCount := 0
 
 	for i < count {
-		randomIndex := r.Intn(len(namespaces))
+		randomIndex, err := getRandomInt(len(namespaces))
+		if err != nil {
+			return nil, err
+		}
+
 		if randomIndex < 1 {
 			randomIndex++
 		}
@@ -87,12 +92,17 @@ func GetRandomPods(clientset k.Interface, count int, excludedNamespaces []string
 				return randomPods, nil
 			}
 			retryCount++
+
 			continue
 		}
 
 		// Select a random pod from the selected namespace.
 		// TODO: ensure the pod has not been already selected.
-		randomIndex = r.Intn(len(pods.Items))
+		randomIndex, err = getRandomInt(len(pods.Items))
+		if err != nil {
+			return nil, err
+		}
+
 		if randomIndex < 1 {
 			randomIndex++
 		}
@@ -100,6 +110,7 @@ func GetRandomPods(clientset k.Interface, count int, excludedNamespaces []string
 		randomPods = append(randomPods, randomPod)
 		i++
 	}
+
 	return randomPods, nil
 }
 
@@ -108,6 +119,7 @@ func getEligibleNamespaces(namespaces []v1.Namespace, excludeList []string) ([]v
 		return nil, fmt.Errorf("error: namespace list is empty")
 	}
 
+	//nolint:prealloc
 	var eligibleNamespaces []v1.Namespace
 
 	for _, namespace := range namespaces {
@@ -118,5 +130,15 @@ func getEligibleNamespaces(namespaces []v1.Namespace, excludeList []string) ([]v
 		}
 		eligibleNamespaces = append(eligibleNamespaces, namespace)
 	}
+
 	return eligibleNamespaces, nil
+}
+
+func getRandomInt(max int) (int, error) {
+	r, err := rand.Int(rand.Reader, big.NewInt(int64(max)))
+	if err != nil {
+		return 0, err
+	}
+
+	return int(r.Int64()), nil
 }

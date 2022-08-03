@@ -31,6 +31,12 @@ monkaos -c config/samples/config.sample.yaml -v info
 kubectl apply -k ./deploy
 ```
 
+#### Try it
+
+```shell
+kubectl create deployment --image nginx --replicas=10 nginx
+```
+
 ## Configuration
 
 The configuration can be specified in yaml or json format.

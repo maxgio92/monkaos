@@ -2,7 +2,8 @@ package schedule
 
 import (
 	"context"
-	"math/rand"
+	"crypto/rand"
+	"math/big"
 	"monkaos/pkg/chaos"
 	"monkaos/pkg/victims"
 	"sync"
@@ -44,6 +45,7 @@ func SetupSchedulerWithLogger(
 	maxLatencySeconds int,
 	enableRandomLatency bool,
 	scheduleDeadlineSeconds int) (*Scheduler, error) {
+
 	return &Scheduler{
 		logger:                  logger,
 		victimsPerScheduleCount: victimsPerScheduleCount,
@@ -78,7 +80,11 @@ func (s *Scheduler) Next() (*Schedule, error) {
 
 	// Add one entry per victim to the schedule.
 	for _, victim := range victims {
-		execTime := s.calculateExecTime()
+		execTime, err := s.calculateExecTime()
+		if err != nil {
+			return nil, err
+		}
+
 		schedule.Add(chaos.New(execTime, victim))
 	}
 
@@ -135,6 +141,7 @@ func (s *Scheduler) scheduleSafe(schedule *Schedule) {
 				if err := ctx.Err(); err != nil {
 					s.logger.Errorf("Schedule has been terminated for: %s", err)
 				}
+
 				return
 			}
 		}
@@ -143,12 +150,12 @@ func (s *Scheduler) scheduleSafe(schedule *Schedule) {
 	chaosWG.Wait()
 }
 
-func (s *Scheduler) calculateExecTime() time.Time {
+func (s *Scheduler) calculateExecTime() (time.Time, error) {
 	switch s.enableRandomLatency {
 	case true:
 		return s.calculateRandomDelayedExecTime()
 	default:
-		return s.calculateDelayedExecTime()
+		return s.calculateDelayedExecTime(), nil
 	}
 }
 
@@ -156,10 +163,20 @@ func (s *Scheduler) calculateDelayedExecTime() time.Time {
 	return time.Now().Add(time.Duration(s.maxLatencySeconds) * time.Second)
 }
 
-func (s *Scheduler) calculateRandomDelayedExecTime() time.Time {
-	r := rand.New(rand.NewSource(time.Now().UnixNano()))
+func (s *Scheduler) calculateRandomDelayedExecTime() (time.Time, error) {
+	randomLatencySeconds, err := getRandomInt(int(s.maxLatencySeconds))
+	if err != nil {
+		return time.Time{}, err
+	}
 
-	randomLatencySeconds := r.Intn(int(s.maxLatencySeconds))
+	return time.Now().Add(time.Duration(randomLatencySeconds) * time.Second), nil
+}
 
-	return time.Now().Add(time.Duration(randomLatencySeconds) * time.Second)
+func getRandomInt(max int) (int, error) {
+	r, err := rand.Int(rand.Reader, big.NewInt(int64(max)))
+	if err != nil {
+		return 0, err
+	}
+
+	return int(r.Int64()), nil
 }

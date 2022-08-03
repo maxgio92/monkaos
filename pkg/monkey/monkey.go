@@ -9,10 +9,6 @@ import (
 	"monkaos/pkg/schedule"
 )
 
-var (
-	logger *log.Logger
-)
-
 type Monkey struct {
 	logger *log.Logger
 	config *config.Config
