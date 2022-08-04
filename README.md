@@ -2,6 +2,7 @@
 
 > Under development
 
+[![Latest](https://img.shields.io/github/v/release/maxgio92/monkaos)](https://github.com/maxgio92/monkaos/releases/latest)
 [![CI](https://github.com/maxgio92/monkaos/actions/workflows/ci.yaml/badge.svg)](https://github.com/maxgio92/monkaos/actions/workflows/ci.yaml)
 [![OCI-CI](https://github.com/maxgio92/monkaos/actions/workflows/oci-ci.yaml/badge.svg)](https://github.com/maxgio92/monkaos/actions/workflows/oci-ci.yaml) [![Release](https://github.com/maxgio92/monkaos/actions/workflows/release.yaml/badge.svg)](https://github.com/maxgio92/monkaos/actions/workflows/release.yaml)
 
