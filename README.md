@@ -6,7 +6,7 @@
 [![CI](https://github.com/maxgio92/monkaos/actions/workflows/ci.yaml/badge.svg)](https://github.com/maxgio92/monkaos/actions/workflows/ci.yaml)
 [![OCI-CI](https://github.com/maxgio92/monkaos/actions/workflows/oci-ci.yaml/badge.svg)](https://github.com/maxgio92/monkaos/actions/workflows/oci-ci.yaml) [![Release](https://github.com/maxgio92/monkaos/actions/workflows/release.yaml/badge.svg)](https://github.com/maxgio92/monkaos/actions/workflows/release.yaml)
 
-Simple [chaos monkey](https://github.com/Netflix/chaosmonkey) on Kubernetes, inspired by [kube-monkey](https://github.com/asobti/kube-monkey).
+Simple [chaos monkey](https://github.com/Netflix/chaosmonkey) on Kubernetes.
 
 ## Usage
 
