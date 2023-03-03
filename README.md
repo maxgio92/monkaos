@@ -82,4 +82,4 @@ Each Chaos entry specifies one or more victims, based on the configured strategy
 
 ## Thanks
 
-this project is highly inspired by [kube-chaos](https://github.com/asobti/kube-monkey).
+this project is inspired by [kube-chaos](https://github.com/asobti/kube-monkey).
